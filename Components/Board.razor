@@ -5,8 +5,6 @@
 <HeadContent>
     <style>
         :root {
-            @ColorContent
-
             --board-bg: @ColorTranslator.ToHtml(BoardColor);   /** the color of the board **/
             --player1: @ColorTranslator.ToHtml(Player1Color);  /** Player 1's piece color **/
             --player2: @ColorTranslator.ToHtml(Player2Color);  /** Player 2's piece color **/
@@ -47,11 +45,9 @@
 
 @code {
     [Parameter]
-    public RenderFragment? ColorContent { get; set; }
-    public Color BoardColor = Color.FromArgb(255, 251, 0);
+    public Color BoardColor { get; set; } = Color.FromArgb(255, 251, 0);
     [Parameter]
     public Color Player1Color { get; set; } = Color.FromArgb(255, 0, 0);
-    //public RenderFragment Player1Color = "rgb(255, 0, 0)";
     [Parameter]
     public Color Player2Color { get; set; } = Color.FromArgb(0, 0, 255);
 
@@ -61,6 +57,8 @@
     private int consecutiveWinCount = 0;
     private int previousWinner = 0;
     private string consecutiveWinsMessage = string.Empty;
+    private bool gameOver = false;
+
 
     private string CurrentTurn => (winnerMessage == string.Empty) ? $"Player {State.PlayerTurn}'s Turn" : "";
     private string ResetStyle => (winnerMessage == string.Empty) ? "display: none;" : "";
@@ -80,40 +78,36 @@
             errorMessage = ex.Message;
         }
 
-        /*
-        winnerMessage = State.CheckForWin() switch
+        if (!gameOver)
         {
-            GameState.WinState.Player1_Wins => "Player 1 Wins!",
-            GameState.WinState.Player2_Wins => "Player 2 Wins!",
-            GameState.WinState.Tie => "It's a tie!",
-            _ => ""
-            };
-        */
-
-        switch (State.CheckForWin() )
-        {
-            case GameState.WinState.Player1_Wins:
-                winnerMessage = "Player 1 Wins!";
-                if (previousWinner != 1)
+            switch (State.CheckForWin() )
+            {
+                case GameState.WinState.Player1_Wins:
+                    winnerMessage = "Player 1 Wins!";
+                    if (previousWinner != 1)
+                        consecutiveWinCount = 0;
+                    consecutiveWinCount++;
+                    previousWinner = 1;
+                    gameOver = true;
+                    break;
+                case GameState.WinState.Player2_Wins:
+                    winnerMessage = "Player 2 Wins!";
+                    if (previousWinner != 2)
+                        consecutiveWinCount = 0;
+                    consecutiveWinCount++;
+                    previousWinner = 2;
+                    gameOver = true;
+                    break;
+                case GameState.WinState.Tie:
+                    winnerMessage = "It's a tie!";
                     consecutiveWinCount = 0;
-                consecutiveWinCount++;
-                previousWinner = 1;
-                break;
-            case GameState.WinState.Player2_Wins:
-                winnerMessage = "Player 2 Wins!";
-                if (previousWinner != 2)
-                    consecutiveWinCount = 0;
-                consecutiveWinCount++;
-                previousWinner = 2;
-                break;
-            case GameState.WinState.Tie:
-                winnerMessage = "It's a tie!";
-                consecutiveWinCount = 0;
-                previousWinner = 0;
-                break;
-            case GameState.WinState.No_Winner:
-                winnerMessage = "";
-                break;
+                    previousWinner = 0;
+                    gameOver = true;
+                    break;
+                case GameState.WinState.No_Winner:
+                    winnerMessage = "";
+                    break;
+            }
         }
 
         if (consecutiveWinCount > 1)
@@ -128,6 +122,7 @@
         winnerMessage = string.Empty;
         errorMessage = string.Empty;
         pieces = new string[42];
+        gameOver = false;
     }
     protected override void OnInitialized()
     {
