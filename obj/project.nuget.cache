@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "mqkkWaNFrNc=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\range\\Documents\\School stuff\\CSE325\\W04 Assignment\\W04 Assignment.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\range\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.11\\microsoft.aspnetcore.app.internal.assets.10.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}
